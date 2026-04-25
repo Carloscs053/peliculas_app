@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:presentacion_t5/pages/detail.page.dart';
+import 'package:presentacion_t5/pages/detail_page.dart';
 import 'package:presentacion_t5/pages/home_page.dart';
 
 final appRouter = GoRouter(

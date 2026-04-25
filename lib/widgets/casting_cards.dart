@@ -5,7 +5,7 @@ class CastingCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 180,
       //color: Colors.red,
