@@ -33,29 +33,11 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 10),
 
             // Populares
-            MovieSlider(),
+            MovieSlider(peliculas: moviesProvider.populares),
 
             SizedBox(height: 10),
 
-            // Próximamente
-            MovieSlider(titulo: 'Próximamente'),
-
-            SizedBox(height: 10),
-
-            // Tus colecciones
-            MovieSlider(titulo: 'Tu lista'),
-
-            SizedBox(height: 10),
-
-            // Cine champagne
-            MovieSlider(titulo: 'Cine Champagne'),
-
-            SizedBox(height: 10),
-
-            // Serie B
-            MovieSlider(titulo: 'Serie B'),
-
-            // TODO Lista populares
+            MovieSlider(peliculas: moviesProvider.mejorValoradas, titulo: 'Mejor valoradas',),
           ],
         ),
       ),

@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:presentacion_t5/models/movie.dart';
+import 'package:presentacion_t5/models/popular_response.dart';
 
 class MovieSlider extends StatelessWidget {
   String? titulo;
-
-  MovieSlider({super.key, this.titulo});
+  List<Movie> peliculas = [];
+  MovieSlider({super.key, this.titulo, required this.peliculas});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    if (peliculas.isEmpty) {
+      return SizedBox(
+        width: double.infinity,
+        height: 250,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return SizedBox(
       width: double.infinity,
       height: 250,
       //color: Colors.red,
@@ -25,8 +35,9 @@ class MovieSlider extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 20,
-              itemBuilder: (_, int index) => _MoviePoster(pos: index),
+              itemCount: peliculas.length,
+              itemBuilder: (_, int index) =>
+                  _MoviePoster(movie: peliculas[index]),
             ),
           ),
         ],
@@ -37,9 +48,9 @@ class MovieSlider extends StatelessWidget {
 
 // Una clase aparte, para separar código y hacer más fácil la lectura y modificaciones
 class _MoviePoster extends StatelessWidget {
-  int? pos;
+  Movie? movie;
 
-  _MoviePoster({this.pos});
+  _MoviePoster({required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +63,12 @@ class _MoviePoster extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => context.push('/detalle/movie_id'),
+              onTap: () => context.push('/detalle/${movie!.id}'),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: FadeInImage(
                   placeholder: AssetImage('assets/images/loading.png'),
-                  image: NetworkImage('https://placehold.co/300x400.png'),
+                  image: NetworkImage(movie?.fullPosterImg),
                   width: 130,
                   height: 190,
                   fit: BoxFit.cover,
@@ -66,7 +77,7 @@ class _MoviePoster extends StatelessWidget {
             ),
           ),
           SizedBox(height: 5),
-          Text('Peli' + (pos! + 1).toString()),
+          Text(movie!.title),
         ],
       ),
     );
