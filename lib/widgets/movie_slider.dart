@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presentacion_t5/models/movie.dart';
-import 'package:presentacion_t5/models/popular_response.dart';
 
 class MovieSlider extends StatelessWidget {
   String? titulo;
@@ -77,7 +76,7 @@ class _MoviePoster extends StatelessWidget {
             ),
           ),
           SizedBox(height: 5),
-          Text(movie!.title),
+          Text(movie?.title ?? ''),
         ],
       ),
     );

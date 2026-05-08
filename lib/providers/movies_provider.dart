@@ -13,11 +13,13 @@ class MoviesProvider extends ChangeNotifier {
   List<Movie> enCines = [];
   List<Movie> populares = [];
   List<Movie> mejorValoradas = [];
+  List<Movie> proximamente = [];
 
   MoviesProvider() {
     getEnCinesMovie();
     getPopularMovies();
     getTopRatedMovies();
+    getProxiamente();
   }
 
   getEnCinesMovie() async {
@@ -30,14 +32,13 @@ class MoviesProvider extends ChangeNotifier {
 
     Response response = await get(url);
 
-    final nowPlayingResponse = Movie.fromRawJson(response.body);
+    final Map<String, dynamic> decodedData = json.decode(response.body);
 
-    enCines = nowPlayingResponse;
-
-    print(enCines[0].title);
-    // Meto la respuesta en una variable mapa
-
-    //final nowPlayingResponse = NowPlayingResponse.fromJson(response.body);
+    if (decodedData['results'] != null) {
+      enCines = List<Movie>.from(
+        decodedData['results'].map((x) => Movie.fromJson(x)),
+      );
+    }
 
     notifyListeners();
   }
@@ -53,9 +54,13 @@ class MoviesProvider extends ChangeNotifier {
 
     Response response = await get(url);
 
-    final popularResponse = PopularResponse.fromRawJson(response.body);
+    final Map<String, dynamic> decodedData = json.decode(response.body);
 
-    populares = popularResponse.results;
+    if (decodedData['results'] != null) {
+      populares = List<Movie>.from(
+        decodedData['results'].map((x) => Movie.fromJson(x)),
+      );
+    }
 
     notifyListeners();
   }
@@ -71,9 +76,35 @@ class MoviesProvider extends ChangeNotifier {
 
     Response response = await get(url);
 
-    final topRatedResponse = TopRatedResponse.fromRawJson(response.body);
+    final Map<String, dynamic> decodedData = json.decode(response.body);
 
-    mejorValoradas = topRatedResponse.results;
+    if (decodedData['results'] != null) {
+      mejorValoradas = List<Movie>.from(
+        decodedData['results'].map((x) => Movie.fromJson(x)),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  getProxiamente() async {
+    Map<String, dynamic> parameters = {
+      'api_key': _apiKey,
+      'language': _language,
+      'page': '1',
+    };
+
+    Uri url = Uri.https(_urlBase, '3/movie/upcoming', parameters);
+
+    Response response = await get(url);
+
+    final Map<String, dynamic> decodedData = json.decode(response.body);
+
+    if (decodedData['results'] != null) {
+      proximamente = List<Movie>.from(
+        decodedData['results'].map((x) => Movie.fromJson(x)),
+      );
+    }
 
     notifyListeners();
   }

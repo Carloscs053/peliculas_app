@@ -37,7 +37,17 @@ class HomeScreen extends StatelessWidget {
 
             SizedBox(height: 10),
 
-            MovieSlider(peliculas: moviesProvider.mejorValoradas, titulo: 'Mejor valoradas',),
+            MovieSlider(
+              peliculas: moviesProvider.mejorValoradas,
+              titulo: 'Mejor valoradas',
+            ),
+
+            SizedBox(height: 10),
+
+            MovieSlider(
+              peliculas: moviesProvider.proximamente,
+              titulo: "Próximamente",
+            ),
           ],
         ),
       ),
