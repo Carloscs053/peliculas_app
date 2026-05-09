@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:presentacion_t5/models/movie.dart';
 
 class MoviesProvider extends ChangeNotifier {
   final String _urlBase = 'api.themoviedb.org';
   final String _apiKey = 'b34ddaf4e39fbe9a90cc4ccbe6c80b34';
   final String _language = 'es-ES';
+  int _popularPage = 0;
 
   // Para guardar y consultar las pelis en cines
   List<Movie> enCines = [];
@@ -22,89 +24,51 @@ class MoviesProvider extends ChangeNotifier {
     getProxiamente();
   }
 
-  getEnCinesMovie() async {
-    Map<String, dynamic> parameters = {
+  Future<List<Movie>> _getJsonData(String endpoint, [int page = 1]) async {
+    List<Movie> movies = [];
+    var url = Uri.https(_urlBase, endpoint, {
       'api_key': _apiKey,
       'language': _language,
-      'page': '1',
-    };
-    Uri url = Uri.https(_urlBase, '/3/movie/now_playing', parameters);
-
-    Response response = await get(url);
-
-    final Map<String, dynamic> decodedData = json.decode(response.body);
-
-    if (decodedData['results'] != null) {
-      enCines = List<Movie>.from(
-        decodedData['results'].map((x) => Movie.fromJson(x)),
-      );
+      'page': '$page',
+    });
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedData = json.decode(response.body);
+      if (decodedData['results'] != null) {
+        movies = List<Movie>.from(
+          decodedData['results'].map((x) => Movie.fromJson(x)),
+        );
+      }
+    } else {
+      throw Exception('Failed to load movies');
     }
+
+    return movies.isEmpty ? [] : movies;
+  }
+
+  getEnCinesMovie() async {
+    enCines = await _getJsonData('/3/movie/now_playing');
 
     notifyListeners();
   }
 
   getPopularMovies() async {
-    Map<String, dynamic> parameters = {
-      'api_key': _apiKey,
-      'language': _language,
-      'page': '1',
-    };
-
-    Uri url = Uri.https(_urlBase, '/3/movie/popular', parameters);
-
-    Response response = await get(url);
-
-    final Map<String, dynamic> decodedData = json.decode(response.body);
-
-    if (decodedData['results'] != null) {
-      populares = List<Movie>.from(
-        decodedData['results'].map((x) => Movie.fromJson(x)),
-      );
-    }
+    _popularPage++;
+    populares = await _getJsonData('/3/movie/popular', _popularPage);
 
     notifyListeners();
   }
 
   getTopRatedMovies() async {
-    Map<String, dynamic> parameters = {
-      'api_key': _apiKey,
-      'language': _language,
-      'page': '1',
-    };
-
-    Uri url = Uri.https(_urlBase, '/3/movie/top_rated', parameters);
-
-    Response response = await get(url);
-
-    final Map<String, dynamic> decodedData = json.decode(response.body);
-
-    if (decodedData['results'] != null) {
-      mejorValoradas = List<Movie>.from(
-        decodedData['results'].map((x) => Movie.fromJson(x)),
-      );
-    }
+    _popularPage++;
+    mejorValoradas = await _getJsonData('/3/movie/top_rated', _popularPage);
 
     notifyListeners();
   }
 
   getProxiamente() async {
-    Map<String, dynamic> parameters = {
-      'api_key': _apiKey,
-      'language': _language,
-      'page': '1',
-    };
-
-    Uri url = Uri.https(_urlBase, '3/movie/upcoming', parameters);
-
-    Response response = await get(url);
-
-    final Map<String, dynamic> decodedData = json.decode(response.body);
-
-    if (decodedData['results'] != null) {
-      proximamente = List<Movie>.from(
-        decodedData['results'].map((x) => Movie.fromJson(x)),
-      );
-    }
+    _popularPage++;
+    proximamente = await _getJsonData('/3/movie/upcoming', _popularPage);
 
     notifyListeners();
   }
