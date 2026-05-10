@@ -2,14 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presentacion_t5/models/movie.dart';
 
-class MovieSlider extends StatelessWidget {
+class MovieSlider extends StatefulWidget {
   String? titulo;
   List<Movie> peliculas = [];
-  MovieSlider({super.key, this.titulo, required this.peliculas});
+  final Function
+  nextPage; // Función que disparo cuando llegue al final del scroll
+  MovieSlider({
+    super.key,
+    this.titulo,
+    required this.peliculas,
+    required this.nextPage,
+  });
+
+  @override
+  State<MovieSlider> createState() => _MovieSliderState();
+}
+
+class _MovieSliderState extends State<MovieSlider> {
+  final ScrollController scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >
+          scrollController.position.maxScrollExtent + 50) {
+        print('Obtener siguiente página');
+        widget.nextPage(); // Disparo la función que me pasan
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (peliculas.isEmpty) {
+    if (widget.peliculas.isEmpty) {
       return SizedBox(
         width: double.infinity,
         height: 250,
@@ -27,16 +58,22 @@ class MovieSlider extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              titulo ?? 'Populares',
+              widget.titulo ?? 'Populares',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
             child: ListView.builder(
+              controller: scrollController,
               scrollDirection: Axis.horizontal,
-              itemCount: peliculas.length,
-              itemBuilder: (_, int index) =>
-                  _MoviePoster(movie: peliculas[index]),
+              itemCount: widget.peliculas.length,
+              itemBuilder: (_, int index) {
+                if (index == widget.peliculas.length - 3) {
+                  widget.nextPage();
+                }
+                final Movie pelicula = widget.peliculas[index];
+                return _MoviePoster(movie: pelicula);
+              },
             ),
           ),
         ],

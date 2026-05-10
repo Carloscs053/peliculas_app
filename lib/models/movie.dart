@@ -4,7 +4,7 @@ class Movie {
   bool? adult;
   String? backdropPath;
   List<int>? genreIds;
-  int? id;
+  String? id;
   String? title;
   String? originalLanguage;
   String? originalTitle;
@@ -47,7 +47,7 @@ class Movie {
     adult: json["adult"],
     backdropPath: json["backdrop_path"] ?? '',
     genreIds: List<int>.from((json["genre_ids"] ?? []).map((x) => x)),
-    id: json["id"],
+    id: json["id"].toString(),
     title: json["title"],
     originalLanguage: json["original_language"] ?? '',
     originalTitle: json["original_title"],

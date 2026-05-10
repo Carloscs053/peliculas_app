@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presentacion_t5/models/movie.dart';
 import 'package:presentacion_t5/widgets/casting_cards.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -7,7 +8,9 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (movieId == null) movieId == 'no-movie';
+    // Recojo el argumento y le digo que lo trate como Movie
+    final Movie movie = ModalRoute.of(context)!.settings.arguments as Movie;
+    print(movie.title);
     return Scaffold(
       // Parecido al SingleChildScrollView pero lleva Slivers,
       // que son Widgets con animaciones chulas cuando hacemos Scroll

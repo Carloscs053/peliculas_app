@@ -3,6 +3,7 @@ import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:go_router/go_router.dart';
 import 'package:presentacion_t5/models/movie.dart';
 import 'package:presentacion_t5/models/now_playing_response.dart';
+import 'package:presentacion_t5/pages/detail_page.dart';
 
 class CardSwiper extends StatelessWidget {
   final List<Movie> movies; // Lista de pelis que recibiré
@@ -36,9 +37,13 @@ class CardSwiper extends StatelessWidget {
         // FadeImage por cada elemento. El context se puede sustituir por _
         itemBuilder: (BuildContext context, int index) {
           final Movie movie = movies[index];
-          print(movie.posterPath);
           return GestureDetector(
-            onTap: () => context.push('/detalle/${movie.id}'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailScreen(movieId: movie.id),
+              ),
+            ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: FadeInImage(

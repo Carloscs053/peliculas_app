@@ -15,7 +15,10 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Películas en cines'),
+        title: Text(
+          'Películas en cines',
+          style: TextStyle(color: Colors.white),
+        ),
         elevation: 0,
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.search_outlined)),
@@ -33,13 +36,17 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 10),
 
             // Populares
-            MovieSlider(peliculas: moviesProvider.populares),
+            MovieSlider(
+              peliculas: moviesProvider.populares,
+              nextPage: () => moviesProvider.getPopularMovies(),
+            ),
 
             SizedBox(height: 10),
 
             MovieSlider(
               peliculas: moviesProvider.mejorValoradas,
               titulo: 'Mejor valoradas',
+              nextPage: () => moviesProvider.getTopRatedMovies(),
             ),
 
             SizedBox(height: 10),
@@ -47,6 +54,7 @@ class HomeScreen extends StatelessWidget {
             MovieSlider(
               peliculas: moviesProvider.proximamente,
               titulo: "Próximamente",
+              nextPage: () => moviesProvider.getProxiamente(),
             ),
           ],
         ),
