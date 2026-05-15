@@ -96,4 +96,27 @@ class MoviesProvider extends ChangeNotifier {
       throw Exception('Failed to load cast');
     }
   }
+
+  Future<List<Movie>> searchMovies(String query) async {
+    var url = Uri.https(_urlBase, '/3/search/movie', {
+      'api_key': _apiKey,
+      'language': _language,
+      'query': query,
+    });
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedData = json.decode(response.body);
+      if (decodedData['results'] != null) {
+        return List<Movie>.from(
+          decodedData['results'].map((x) => Movie.fromJson(x)),
+        );
+      }
+    } else {
+      throw Exception('Failed to search movies');
+    }
+
+    return [];
+  }
 }
