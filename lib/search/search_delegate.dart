@@ -53,10 +53,18 @@ class MovieSearchDelegate extends SearchDelegate {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
+
+          final List<Movie> movies = snapshot.data! as List<Movie>;
+
+          movies.sort((a, b) {
+            if (a.releaseDate == null) return 1;
+            if (b.releaseDate == null) return -1;
+            return b.releaseDate!.compareTo(a.releaseDate!);
+          });
           return ListView.builder(
-            itemCount: snapshot.data!.length,
+            itemCount: movies.length,
             itemBuilder: (_, int index) {
-              return _SuggestionItem(movie: snapshot.data![index]);
+              return _SuggestionItem(movie: movies[index]);
             },
           );
         },
