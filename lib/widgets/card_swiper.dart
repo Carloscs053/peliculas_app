@@ -35,16 +35,20 @@ class CardSwiper extends StatelessWidget {
         // FadeImage por cada elemento. El context se puede sustituir por _
         itemBuilder: (BuildContext context, int index) {
           final Movie movie = movies[index];
+          movie.heroId = 'swiper-${movie.id}';
           return GestureDetector(
             onTap: () {
               context.push('/detalle', extra: movie);
             },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: FadeInImage(
-                placeholder: AssetImage('assets/images/loading.gif'),
-                image: NetworkImage(movie.fullPosterImg),
-                fit: BoxFit.cover,
+            child: Hero(
+              tag: movie.heroId!, // id único para que sepa moverse el Hero
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/images/loading.gif'),
+                  image: NetworkImage(movie.fullPosterImg),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           );
