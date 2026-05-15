@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:presentacion_t5/models/movie.dart';
 import 'package:presentacion_t5/pages/detail_page.dart';
 import 'package:presentacion_t5/pages/home_page.dart';
 
@@ -7,11 +8,11 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
     GoRoute(
-      path: '/detalle/:movie_id',
+      path: '/detalle',
       builder: (context, state) {
-        final String? id = state.pathParameters['id'];
+        final movie = state.extra as Movie;
 
-        return DetailScreen(movieId: id);
+        return DetailScreen(movie: movie);
       },
     ),
   ],

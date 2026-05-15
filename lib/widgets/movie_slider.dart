@@ -19,7 +19,7 @@ class MovieSlider extends StatefulWidget {
 }
 
 class _MovieSliderState extends State<MovieSlider> {
-  final ScrollController scrollController = new ScrollController();
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -99,11 +99,13 @@ class _MoviePoster extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => context.push('/detalle/${movie!.id}'),
+              onTap: () {
+                context.push('/detalle', extra: movie);
+              },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: FadeInImage(
-                  placeholder: AssetImage('assets/images/loading.png'),
+                  placeholder: AssetImage('assets/images/loading.gif'),
                   image: NetworkImage(movie?.fullPosterImg),
                   width: 130,
                   height: 190,

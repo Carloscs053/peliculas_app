@@ -39,6 +39,10 @@ class Movie {
     return 'https://image.tmdb.org/t/p/w500$posterPath';
   }
 
+  get fullbackdropPath {
+    return 'https://image.tmdb.org/t/p/w500$backdropPath';
+  }
+
   factory Movie.fromRawJson(String str) => Movie.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());

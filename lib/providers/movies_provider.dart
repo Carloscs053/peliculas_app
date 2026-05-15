@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:presentacion_t5/models/cast_response.dart';
 import 'package:presentacion_t5/models/movie.dart';
 
 class MoviesProvider extends ChangeNotifier {
@@ -16,6 +16,7 @@ class MoviesProvider extends ChangeNotifier {
   List<Movie> populares = [];
   List<Movie> mejorValoradas = [];
   List<Movie> proximamente = [];
+  Map<String, List<Cast>> movieCast = {};
 
   MoviesProvider() {
     getEnCinesMovie();
@@ -71,5 +72,28 @@ class MoviesProvider extends ChangeNotifier {
     proximamente = await _getJsonData('/3/movie/upcoming', _popularPage);
 
     notifyListeners();
+  }
+
+  Future<List<Cast>> getMovieCast(String movieId) async {
+    if (movieCast.containsKey(movieId)) {
+      return movieCast[movieId]!;
+    }
+
+    var url = Uri.https(_urlBase, '/3/movie/$movieId/credits', {
+      'api_key': _apiKey,
+      'language': _language,
+    });
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final castResponse = CastResponse.fromRawJson(response.body);
+
+      movieCast[movieId] = castResponse.cast;
+
+      return castResponse.cast;
+    } else {
+      throw Exception('Failed to load cast');
+    }
   }
 }
