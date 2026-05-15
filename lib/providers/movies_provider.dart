@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:presentacion_t5/models/actor_detail_response.dart';
+import 'package:presentacion_t5/models/actor_movies_response.dart';
 import 'package:presentacion_t5/models/cast_response.dart';
 import 'package:presentacion_t5/models/movie.dart';
+import 'package:presentacion_t5/pages/actor_detail_page.dart';
 
 class MoviesProvider extends ChangeNotifier {
   final String _urlBase = 'api.themoviedb.org';
@@ -17,6 +20,9 @@ class MoviesProvider extends ChangeNotifier {
   List<Movie> mejorValoradas = [];
   List<Movie> proximamente = [];
   Map<String, List<Cast>> movieCast = {};
+  Map<int, ActorDetailsResponse> actorBiographyCache = {};
+  Map<int, List<Movie>> actorMoviesCache = {};
+  Map<int, String> movieTrailers = {};
 
   MoviesProvider() {
     getEnCinesMovie();
@@ -118,5 +124,48 @@ class MoviesProvider extends ChangeNotifier {
     }
 
     return [];
+  }
+
+  Future<ActorDetailsResponse> getActorBiography(int actorId) async {
+    if (actorBiographyCache.containsKey(actorId)) {
+      return actorBiographyCache[actorId]!;
+    }
+
+    final url = Uri.https(_urlBase, '/3/person/$actorId', {
+      'api_key': _apiKey,
+      'language': _language,
+    });
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final actorDetails = ActorDetailsResponse.fromRawJson(response.body);
+      actorBiographyCache[actorId] = actorDetails;
+      return actorDetails;
+    } else {
+      throw Exception('Error cargando la biografía');
+    }
+  }
+
+  Future<List<Movie>> getActorMovies(int actorId) async {
+    if (actorMoviesCache.containsKey(actorId)) {
+      return actorMoviesCache[actorId]!;
+    }
+
+    final url = Uri.https(_urlBase, '/3/person/$actorId/movie_credits', {
+      "api_key": _apiKey,
+      "language": _language,
+    });
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final creditsResponse = ActorMoviesResponse.fromRawJson(response.body);
+
+      actorMoviesCache[actorId] = creditsResponse.cast;
+      return creditsResponse.cast;
+    } else {
+      throw Exception('Error cargando las películas del actor');
+    }
   }
 }

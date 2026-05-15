@@ -71,6 +71,7 @@ class _CustomAppBar extends StatelessWidget {
           placeholder: AssetImage('assets/images/loading.gif'),
           image: NetworkImage(movie.fullbackdropPath),
           fit: BoxFit.cover,
+          width: double.infinity,
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presentacion_t5/models/cast_response.dart';
 import 'package:presentacion_t5/providers/movies_provider.dart';
 import 'package:provider/provider.dart';
@@ -53,30 +54,35 @@ class _CastCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
-      width: 110,
-      //color: Colors.green,
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadiusGeometry.circular(20),
-            child: FadeInImage(
-              placeholder: const AssetImage('assets/images/loading.gif'),
-              image: NetworkImage(actor!.fullPosterPath),
-              height: 140,
-              width: 100,
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        context.push('/actor', extra: actor);
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        width: 110,
+        //color: Colors.green,
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(20),
+              child: FadeInImage(
+                placeholder: const AssetImage('assets/images/loading.gif'),
+                image: NetworkImage(actor!.fullPosterPath),
+                height: 140,
+                width: 100,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          SizedBox(height: 5),
-          Text(
-            actor!.name,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-        ],
+            SizedBox(height: 5),
+            Text(
+              actor!.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

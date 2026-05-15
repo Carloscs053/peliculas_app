@@ -14,23 +14,27 @@ class CardSwiper extends StatelessWidget {
 
     final size = MediaQuery.of(context).size;
 
+    final double cardWidth = size.width > 600 ? 300 : size.width * 0.75;
+    final double cardHeight = size.width > 600 ? 450 : size.height * 0.6;
+    final double swiperHeight = size.width > 600 ? 500 : size.height * 0.6;
+
     if (movies.isEmpty) {
       return SizedBox(
         width: double.infinity,
-        height: size.height * 0.6,
+        height: swiperHeight,
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
     return SizedBox(
       width: double.infinity,
-      height: size.height * 0.6, // La mitad de la altura. Da juego
+      height: swiperHeight, // La mitad de la altura. Da juego
       //color: Colors.red,
       child: Swiper(
         itemCount: movies.length, // Tantas tarjetas como pelis tenga la lista
         layout: SwiperLayout.STACK, // Layout, Jugar con esto
-        itemWidth: size.width * 0.75,
-        itemHeight: size.height * 0.6, // Se puede quitar, lo cogería del padre
+        itemWidth: cardWidth,
+        itemHeight: cardHeight, // Se puede quitar, lo cogería del padre
         // Un builder siempre construye algo, en este caso devolvemos un
         // FadeImage por cada elemento. El context se puede sustituir por _
         itemBuilder: (BuildContext context, int index) {
