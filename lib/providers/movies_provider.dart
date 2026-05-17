@@ -6,6 +6,7 @@ import 'package:presentacion_t5/models/actor_detail_response.dart';
 import 'package:presentacion_t5/models/actor_movies_response.dart';
 import 'package:presentacion_t5/models/cast_response.dart';
 import 'package:presentacion_t5/models/movie.dart';
+import 'package:presentacion_t5/models/video_response.dart';
 import 'package:presentacion_t5/pages/actor_detail_page.dart';
 
 class MoviesProvider extends ChangeNotifier {
@@ -22,7 +23,8 @@ class MoviesProvider extends ChangeNotifier {
   Map<String, List<Cast>> movieCast = {};
   Map<int, ActorDetailsResponse> actorBiographyCache = {};
   Map<int, List<Movie>> actorMoviesCache = {};
-  Map<int, String> movieTrailers = {};
+  Map<String, String> movieTrailers = {};
+  List<Movie> favoritas = [];
 
   MoviesProvider() {
     getEnCinesMovie();
@@ -167,5 +169,49 @@ class MoviesProvider extends ChangeNotifier {
     } else {
       throw Exception('Error cargando las películas del actor');
     }
+  }
+
+  Future<String?> getMovieTrailer(String movieId) async {
+    if (movieTrailers.containsKey(movieId)) {
+      return movieTrailers[movieId];
+    }
+
+    final url = Uri.https(_urlBase, '/3/movie/$movieId/videos', {
+      "api_key": _apiKey,
+      "language": _language,
+    });
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final videosResponse = VideoResponse.fromRawJson(response.body);
+
+      for (var video in videosResponse.results) {
+        if (video.site == 'YouTube' && video.type == 'Trailer') {
+          movieTrailers[movieId] = video.key;
+          return video.key;
+        }
+      }
+
+      return null;
+    }
+
+    return null;
+  }
+
+  void marcarFavoritas(Movie movie) {
+    final existe = favoritas.any((m) => m.id == movie.id);
+
+    if (existe) {
+      favoritas.removeWhere((m) => m.id == movie.id);
+    } else {
+      favoritas.add(movie);
+    }
+
+    notifyListeners();
+  }
+
+  bool esFavorita(Movie movie) {
+    return favoritas.any((m) => m.id == movie.id);
   }
 }

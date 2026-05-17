@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:presentacion_t5/models/movie.dart';
+import 'package:presentacion_t5/providers/movies_provider.dart';
 import 'package:presentacion_t5/widgets/casting_cards.dart';
+import 'package:presentacion_t5/widgets/movie_trailer.dart';
+import 'package:provider/provider.dart';
 
 class DetailScreen extends StatelessWidget {
   final Movie movie;
@@ -19,6 +22,7 @@ class DetailScreen extends StatelessWidget {
             delegate: SliverChildListDelegate([
               _PosterAndTitle(movie: movie),
               _Overview(movie: movie),
+              MovieTrailer(movieId: movie.id!),
               CastingCards(movieId: movie.id!),
             ]),
           ),
@@ -84,6 +88,9 @@ class _PosterAndTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final moviesProvider = Provider.of<MoviesProvider>(context);
+    final isFav = moviesProvider.esFavorita(movie);
+
     return Container(
       margin: EdgeInsets.only(top: 20),
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -127,6 +134,17 @@ class _PosterAndTitle extends StatelessWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],
+                ),
+                const SizedBox(height: 15),
+                IconButton(
+                  onPressed: () {
+                    moviesProvider.marcarFavoritas(movie);
+                  },
+                  icon: Icon(
+                    isFav ? Icons.favorite : Icons.favorite_border,
+                    color: isFav ? Colors.amber : Colors.grey,
+                    size: 35,
+                  ),
                 ),
               ],
             ),
